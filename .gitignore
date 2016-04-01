@@ -1,0 +1,7 @@
+# Distribution
+*.egg-info/
+build
+dist
+
+# Miscelleneous
+*.pyc
