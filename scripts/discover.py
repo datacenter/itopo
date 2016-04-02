@@ -4,17 +4,17 @@
 
 from pprint import pprint
 import itopo
-import paci
+import pyaci
 import socket
 import sys
 import yaml
 
 
 def main():
-    apic = paci.Node('https://{}:{}'.format(sys.argv[1], sys.argv[2]))
-    apic.METHOD.aaaLogin('admin', 'ins3965!').POST()
+    apic = pyaci.Node('https://{}:{}'.format(sys.argv[1], sys.argv[2]))
+    apic.methods.Login('admin', 'ins3965!').POST()
 
-    mos = apic.CLASS('topSystem').GET()
+    mos = apic.methods.ResolveClass('topSystem').GET()
     topo = itopo.Topology()
     for mo in mos:
         node = topo.addNode(mo.id, mo.role)
@@ -35,8 +35,9 @@ def main():
 
     # print itopo.Topology().fromDict(topo.toDict()).toYaml()
 
-    loader = itopo.Loader()
-    print loader.topology().toYaml()
+    # loader = itopo.Loader()
+    # print loader.topology().toYaml()
+    print topo.toYaml()
 
 
 if __name__ == '__main__':
