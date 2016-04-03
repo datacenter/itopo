@@ -3,6 +3,7 @@
 from collections import defaultdict
 import os
 import yaml
+import json
 
 try:
     import pyaci
@@ -82,6 +83,9 @@ class Node(Element):
         return yaml.safe_dump(self.toDict(), default_flow_style=False,
                               encoding='utf-8', allow_unicode=True)
 
+    def toJson(self):
+        return json.dumps(self.toDict(), indent=2)
+
 
 class Controller(Node):
     ROLE = 'controller'
@@ -156,6 +160,9 @@ class Topology(object):
     def toYaml(self):
         return yaml.safe_dump(self.toDict(), default_flow_style=False,
                               encoding='utf-8', allow_unicode=True)
+
+    def toJson(self):
+        return json.dumps(self.toDict(), indent=2)
 
     def _addNode(self, node):
         self._nodesByRole[node.role].append(node)
