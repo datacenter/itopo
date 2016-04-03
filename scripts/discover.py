@@ -18,7 +18,7 @@ def parse_args():
 
     parser.add_argument('hostNameOrIP', nargs=1,
                         help='Hostname or IP address of APIC')
-    parser.add_argument('-P', '--port', type=int,
+    parser.add_argument('-P', '--port', type=int, default=80,
                             help='Port of the APIC')
 
     parser.add_argument('-u', '--user', default='admin',
@@ -42,9 +42,8 @@ def parse_args():
 def main():
     args = parse_args()
 
-    protocol = 'https' if args.https else 'http'
-    nodeUrl = protocol + "://" + args.hostNameOrIP[0]
-    if args.port: nodeUrl += ":" + str(args.port)
+    nodeUrl = '{}://{}:{}'.format('https' if args.https else 'http', 
+                                  args.hostNameOrIP[0], args.port)
 
     apic = pyaci.Node(nodeUrl)
     apic.methods.Login('admin', 'ins3965!').POST()
@@ -68,13 +67,12 @@ def main():
             else:
                 node.oobHostName = host
 
-    # if args.output == 'yaml':
-    #     print topo.toYaml()
-    # elif args.output == 'json':
-    #     print topo.toJson()
-    # elif args.output == 'xml':
-    #     print topo.toXml()
-    print topo.toYaml()
+    if args.output == 'yaml':
+        print topo.toYaml()
+    elif args.output == 'json':
+        print topo.toJson()
+    elif args.output == 'xml':
+        print topo.toXml()
 
 if __name__ == '__main__':
     main()
