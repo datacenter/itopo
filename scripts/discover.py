@@ -2,16 +2,51 @@
 
 # Copyright (c) 2015 Cisco Systems, Inc. All rights reserved.
 
-from pprint import pprint
 import itopo
 import pyaci
 import socket
 import sys
 import yaml
+import getpass
 
+
+def parse_args():
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description='Generates an ACI Fabric topology')
+
+    parser.add_argument('hostNameOrIP', nargs=1,
+                        help='Hostname or IP address of APIC')
+    parser.add_argument('-P', '--port', type=int,
+                            help='Port of the APIC')
+
+    parser.add_argument('-u', '--user', default='admin',
+                        help='APIC Username')
+    parser.add_argument('-p', '--password', default='ins3965!',
+                        help='APIC password')
+    
+    parser.add_argument('-S', '--https', default=None,
+                        help='use HTTPS', action='store_true')
+    parser.add_argument('-o', '--output', default="yaml",
+                        help='Display format (xml, json, yaml)')
+
+    args = parser.parse_args()
+
+    if args.password is None:
+        args.password = getpass.getpass('Enter {} password for {}: '.format(
+            args.user, args.host[0]))
+
+    return args
 
 def main():
-    apic = pyaci.Node('https://{}:{}'.format(sys.argv[1], sys.argv[2]))
+    args = parse_args()
+
+    protocol = 'https' if args.https else 'http'
+    nodeUrl = protocol + "://" + args.hostNameOrIP[0]
+    if args.port: nodeUrl += ":" + str(args.port)
+
+    apic = pyaci.Node(nodeUrl)
     apic.methods.Login('admin', 'ins3965!').POST()
 
     mos = apic.methods.ResolveClass('topSystem').GET()
@@ -33,12 +68,13 @@ def main():
             else:
                 node.oobHostName = host
 
-    # print itopo.Topology().fromDict(topo.toDict()).toYaml()
-
-    # loader = itopo.Loader()
-    # print loader.topology().toYaml()
+    # if args.output == 'yaml':
+    #     print topo.toYaml()
+    # elif args.output == 'json':
+    #     print topo.toJson()
+    # elif args.output == 'xml':
+    #     print topo.toXml()
     print topo.toYaml()
-
 
 if __name__ == '__main__':
     main()
