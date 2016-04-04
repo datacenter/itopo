@@ -5,7 +5,7 @@ Python Bindings for Managing Cisco ACI Fabric Topologies
 Introduction
 ------------
 
-`itopo` provides Python bindings for represeting, and accessing information
+`itopo` provides Python bindings for representing, and accessing information
 about Cisco ACI Fabric topologies.
 
 Installation
