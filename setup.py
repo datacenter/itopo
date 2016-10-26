@@ -38,6 +38,8 @@ setup(
 
     keywords='cisco aci apic datacenter sdn',
 
+    py_modules=['itopo'],
+
     packages=find_packages(exclude=['tests']),
 
     # List run-time dependencies here.  These will be installed by pip when
